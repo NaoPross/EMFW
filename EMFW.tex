@@ -1,8 +1,9 @@
 % !TeX program = xelatex
 % !TeX encoding = utf8
 % !TeX root = Vorlage.tex
+% vim: ts=2 sw=2 et tw=78:
 
-\documentclass[margin=normal]{hsrzf}
+\documentclass[margin=tiny]{hsrzf}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Packages
@@ -12,26 +13,24 @@
 
 %% Language configuration
 \usepackage{polyglossia}
-\setdefaultlanguage[variant=swiss]{german}
-\setotherlanguage{english}
+\setdefaultlanguage{english}
 
 %% License configuration
 \usepackage[
   type={CC},
   modifier={by-nc-sa},
   version={4.0},
-  lang={german},
 ]{doclicense}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Metadata
 
-\course{Elektrotechnik}
-\module{ModAbk}
-\semester{Fr\"uhlingssemester 2020}
+\course{Electrical Engineering and Information Technology}
+\module{Electromagnetic Fields and Waves}
+\semester{Spring Semester 2023}
 
-\authoremail{vorname.name@ost.ch}
-\author{\textsl{Vorname Name} -- \texttt{\theauthoremail}}
+\authoremail{npross@ethz.ch}
+\author{\textsl{Naoki Sean Pross} -- \texttt{\theauthoremail}}
 
 % did someone help you with this work?
 \contributors{
@@ -40,8 +39,13 @@
   % do not forget to add yourself!
 }
 
-\title{\texttt{\themodule} Zusammenfassung}
+\title{\themodule}
 \date{\thesemester}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Macros
+
+\newcommand{\cvec}[1]{\underline{\vec{#1}}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Document
@@ -73,159 +77,264 @@
 % I like to use 2 columns, you can remove this line to have one column.
 \twocolumn
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Sample content
+\section{Maxwell's Equations}
 
-\begin{english}
-  \section{How to use this template}
+\subsection{Time Domain}
 
-  \subsection{Introduction}
+Maxwell's equations in matter in their integral form are:
+\begin{align*}
+  &\textit{Gauss} &
+    \oint_{\partial V} \vec{D} \dotp d\vec{s}
+    &= \int_V \rho_0 dv, \\
+  &\textit{Ampère} &
+    \oint_{\partial A} \vec{H} \dotp d\vec{s}
+    &= \int \left[ \vec{J}_0 + \partial_t \vec{D} \right] d\vec{s}, \\
+  &\textit{Faraday} &
+    \oint_{\partial A} \vec{E} \dotp d\vec{s} 
+    &= -\partial_t \int_A \vec{B} \dotp d\vec{s}, \\
+  &\textit{Gauss} &
+    \int_{\partial V} \vec{B} \dotp d\vec{s}
+    &= 0.
+\end{align*}
+Where the secondary sources are contained in the constitutive relations for
+the \emph{polarization} and \emph{magnetization} of materials:
+\begin{align*}
+  \vec{D} &= \varepsilon \vec{E} + \vec{P}, &
+  \vec{B} &= \mu_0 \left[ \vec{H} + \vec{M} \right].
+\end{align*}
 
-  This template is built on top of the
-  \texttt{\textcolor{OSTBlackberry}{OST}stud} package, which provides many
-  useful features such as sane defaults and nice macros (see
-  \S\ref{sec:howto:sample}). The complete documentation can be found at
+In their differential form Maxwell's equatiosn are
+\begin{align*}
+  &\textit{Gauss} &
+    \div \vec{D} &= \rho_0, &
+  &\textit{Ampère} &
+    \curl \vec{H} &= \partial_t \vec{D} + \vec{J}_0, \\
+  &\textit{Faraday} &
+    \curl \vec{E} &= - \partial_t \vec{B}, &
+  &\textit{Gauss} &
+    \div \vec{B} &= 0,
+\end{align*}
 
-  \begin{center}
-    \url{https://ctan.org/pkg/oststud}
-  \end{center}
+Maxwell's equations implicitly contain the continuity equation for the
+conservation of charge. Taking the divergence of Ampère's law and using the
+fact that $\div(\curl \vec{H} = 0)$, and that $\div \vec{D} = \rho_0$:
+\[
+  0 = \partial_t \rho_0 + \div \vec{J}.
+\]
 
-  By default the main language is German and the secondary language is English,
-  you can change this on top of the document by editing the lines
-  \lstinline|\setotherlanguage{}| and \lstinline|\setmainlanguage{}|. Further
-  the default license is CC-BY-NC, also in German. This can also be changed by
-  configuring the options of the \texttt{doclicense} package.
+\subsection{Spectral Representation}
 
-  \subsection{Examples} \label{sec:howto:sample}
+Applying the Fourier transform to Maxwell's equation we get
+\begin{align*}
+  &\textit{Gauss} &
+    \div \hat{\vec{D}} &= \rho_0, &
+  &\textit{Ampère} &
+    \curl \hat{\vec{H}} &= -i\omega \hat{\vec{D}} + \hat{\vec{J}}_0, \\
+  &\textit{Faraday} &
+    \curl \hat{\vec{E}} &= i\omega \hat{\vec{B}}, &
+  &\textit{Gauss} &
+    \div \hat{\vec{B}} &= 0.
+\end{align*}
+For monochromatic fields we can replace each quantity with its complex
+auxiliary field $\hat{\vec{Q}}(\vec{r}, \omega) \leadsto \cvec{Q}(\vec{r})$.
 
-  Here are some examples of the features provided by the
-  \texttt{\textcolor{OSTBlackberry}{OST}stud} package.
+\section{Electromagnetic Waves}
 
-  \subsubsection{Electrodynamics and Physics}
+\subsection{The Wave Equation}
 
-  The notation for vectors is ispired the notation of Prof. H.D. Lang. As we
-  know Faraday's law in its integral form is
-  \[
-    \oint_{\partial A} \vec{E} \dotp d\vec{l}
-      = -\frac{d}{dt} \int_A \vec{B} \dotp d\vec{s},
-  \]
-  however, anyone who has taken ELT3 knows that this expression can become very
-  painful very fast. Thus, we consider only the harmonic solutions in the
-  frequency domain by Fourier transforming this expression, i.e. we define
-  $\underline{\vec{E}}(\omega) = \fourier\{\vec{E}(t)\}$ and similarly
-  $\underline{\vec{B}}(\omega) = \fourier\{\vec{B}(t)\}$ using the convention
-  such that
-  \[
-    \frac{d}{dt} \vec{E} 
-    \quad\corresponds\quad
-    j\omega \underline{\vec{E}}.
-  \]
+Combining Ampère and Faraday's laws by expressing the fluxes ($\vec{D}$,
+$\vec{B}$) in term of field strenghts ($\vec{E}$, $\vec{H}$) and taking their
+curl results in the wave equations
+\begin{subequations}
+  \begin{align*}
+    \curl \curl \vec{E} + \frac{1}{c^2} \partial^2_t \vec{E}
+      &= - \mu_0 \partial_t \left(
+          \vec{J}_0 + \partial_t \vec{P} + \curl \vec{M}
+        \right), \\
+    \curl \curl \vec{H} + \frac{1}{c^2} \partial^2_t \vec{H}
+      &= \curl \vec{J}_0 + \curl \partial_t \vec{P}
+          - \frac{1}{c^2} \partial_t^2 \vec{M}.
+  \end{align*}
+\end{subequations}
 
-  This is particularly useful for solving the electromagnetic Wave equation
-  \[
-    \vlaplacian \vec{\tilde{E}} - \mu\sigma \partial_t \vec{\tilde{E}}
-      - \mu\varepsilon \partial_t^2 \vec{\tilde{E}} = \vec{0},
-  \]
-  since the time derivatives become $j\omega$ and $\omega^2$. Then as you will
-  learn for e.g. in the ElMag course $\underline{\vec{\tilde{H}}} = - \curl
-  \underline{\vec{\tilde{E}}} / j\omega \mu_0$).
+In free space since $\div \vec{E} = 0$, $\vec{J} = \vec{0}$ and $\vec{M} =
+\vec{0}$, then using a vector calculus identity we get
+\begin{align*}
+  \vlaplacian \vec{E} - \frac{1}{c^2} \partial^2_t \vec{E} &= \vec{0}, &
+  \vlaplacian \vec{H} - \frac{1}{c^2} \partial^2_t \vec{H} &= \vec{0}. &
+\end{align*}
 
-  \subsubsection{Mathematical Programming}
+\subsection{Monochromatic Fields and Waves}
 
-  Electrical engineers also work with a lot of mathematical programming and
-  optimization problems, such as the linear quadratic regulator controller
-  \[
-    \vec{u}^\star = \argmin_{\vec{u}} \int_0^\infty
-      \mt{\vec{x}} \mx{Q} \vec{x} + \mt{\vec{u}} \mx{R} \vec{u} \, dt,
-  \]
-  or Newton's method
-  \[
-    \vec{x}_{k+1} = \vec{x}_k + \minv{\mx{H}_f}(\vec{x}_k) \grad f(\vec{x}_k)
-  \]
-  where $f: \mathbb{R}^m \to \mathbb{R}$ and $\vec{x}_0$ is the initial guess.
+These wave equations are solved using the separation Ansatz, $\vec{E}(\vec{r},
+t) = \vec{R}(\vec{r}) T(t)$. Solving the ODE for the time component we get
+$T(t) = \Re{c_\omega e^{-i\omega t}}$, with $c_\omega \in \mathbb{C}$. We
+define $\cvec{E}(\vec{r}) = c_\omega \vec{R}(\vec{r})$ and call it the
+\emph{complex auxiliary field}, and the physical solution is $\vec{E}(\vec{r},
+t) = \Re{\cvec{E}(\vec{r})e^{-i\omega t}}$. Since this depends on a specific
+$\omega$ we call this a \emph{monochromatic} field.
 
-  \subsubsection{Software and Code}
+The simplest monochromatic field is a plane wave, from the Ansatz
+$\cvec{E}(\vec{r}) = \cvec{E}_0 e^{\pm i\vec{k} \dotp \vec{r}}$ which when
+plugged in the wave equations becomes the Helmholtz equation
+\[
+  \vlaplacian \cvec{E}(\vec{r}) + k^2 \cvec{E}(\vec{r}) = 0
+\]
+which gives the dispersion relation
+\[
+  k^2 = \vec{k} \dotp \vec{k} = k_x^2 + k_y^2 + k_z^2 =
+  \frac{\omega^2}{c^2}.
+\]
+Then because $\div \vec{E} = \Re{\vec{k} \dotp \cvec{E}_0 e^{i(\vec{k}
+\dotp\vec{r} - \omega t)}} \iff \vec{k} \dotp \cvec{E}_0 = \vec{0}$
+(orthogonal). The corresponding magnetic field is given by Faraday's law that
+becomes $\curl \cvec{E} = i\vec{k} \crossp \cvec{E}_0 e^{i\vec{k}\dotp
+\vec{r}} = i\omega \mu_0 \cvec{H}$, which means that
+\[
+  \cvec{H}_0 = \frac{1}{\omega \mu_0} \vec{k} \crossp \cvec{E}_0 =
+  \frac{\vec{k} \crossp \cvec{E}_0}{Z_0},
+  \quad \text{and} \quad
+  \cvec{H}_0 ~\bot~ \cvec{E}_0.
+\]
+The temporal spectrum (Fourier transform) of a monochromatic wave is two dirac deltas
+\[
+  \hat{\vec{E}}(\vec{r}, \omega') = \frac{1}{2} \left[
+    \cvec{E}(\vec{r}) \delta(\omega' - \omega)\
+    + \cvec{E}^*(\vec{r}) \delta(\omega' + \omega) \right].
+\]
 
-  We do a lot of maths, but sometimes we also write real code, either using
-  really painful langauges such as C\texttt{++} or pseudocode
-  (\textsc{Python}). For example see Fig. \ref{fig:cpp-code}.
+\subsection{Evanescent Waves}
 
-  \begin{figure*}
-    \begin{lstlisting}[language=c++]
-#pragma once
+Because $k^2 = \omega^2 / c^2$, then $k_z = \sqrt{k^2 - k_x^2 - k_y^2}$, and
+if $k_x^2 + k_y^2 > \omega^2 / c^2$ then $k_z$ becomes imaginary and results
+in an exponential decaying wave, also called \emph{evanescent} wave
+\[
+  \vec{E}(\vec{r}, t) = \Re{\cvec{E}_0 e^{\pm i(k_x x + k_y y - i\omega t)}}
+    e^{\pm|k_z| z}.
+\]
+These waves are a form of stored energy (reactive power) and can be found near
+sources or at material interfaces.
 
-#include <memory>
-#include <set>
+\subsection{General Solutions}
 
-namespace flat {
-  namespace core {
-    enum class priority_t : unsigned  {
-      max = 0,
-      higher = 1,
-      high = 2,
-      none = 3,
-      low = 4,
-      lower = 5,
-      min = 6,
-    };
+We can construct general solutions to the wave equation by combining plane
+(and implicitly evanescent) waves, infinitely many of them,
+\[
+  \vec{E}(\vec{r}, t) = \Re{\iint \hat{\cvec{E}}_0(\vec{k}, \omega)
+    e^{i(\vec{k}\cdot \vec{r} - \omega t)} d\omega d\vec{k}}.
+\]
+Inside the real operator is a 4D Fourier transform of the \emph{complex
+amplitude density} $\hat{\cvec{E}}_0(\vec{k}, \omega)$. For finite bandwidth
+the solution is given in term of the \emph{temporal spectrum}
+$\vec{E}(\vec{r}, \omega)$:
+\[
+  \vec{E}(\vec{r}, t) = \Re{
+    \int_\mathbb{R} \hat{\vec{E}}(\vec{r}, \omega) e^{-i\omega t} d\omega
+  } = \int_\mathbb{R} \hat{\vec{E}}(\vec{r}, \omega) \, d\omega,
+\]
+where to remove $\Re{\cdot}$ we impose the symmetry $\hat{\vec{E}}(\vec{r},
+-\omega) = \hat{\vec{E}}^*(\vec{r}, \omega)$. The inverse transform is then
+\[
+  \hat{\vec{E}}(\vec{r}, \omega) = \frac{1}{2\pi} \int_\mathbb{R}
+  \vec{E}(\vec{r}, t) e^{i\omega t} dt.
+\]
 
-    class prioritized {
-    public:
-      const priority_t priority;
+\subsection{Polarization}
 
-      prioritized(priority_t p = priority_t::none) : priority(p) {}
-    };       
+A plane wave is \emph{linearly} polarized if $\cvec{E}_0 = \vec{E}_0
+e^{i\phi}$. Ciricular polarization is when there is a phase difference of $\pm
+\pi / 2 \equiv \pm i$ in two components:
+\begin{align*}
+  z \text{--Left}\quad
+    & \cvec{E}(\vec{r}) = E_0 e^{i\phi} \begin{bmatrix}
+      0 & 1 & -i
+    \end{bmatrix}^\mathsf{T} e^{ikz}, \\
+  z \text{--Right}\quad
+    & \cvec{E}(\vec{r}) = E_0 e^{i\phi} \begin{bmatrix}
+      0 & 1 & i
+    \end{bmatrix}^\mathsf{T} e^{ikz}.
+\end{align*}
+Then $\Re{\cvec{E}(\vec{r})e^{-i\omega t}}$ will contain sines and cosines.
+\emph{Elliptic} polarization is when the two out of phase components have
+different amplitudes.
 
-    struct prioritize {
-      bool operator()(const prioritized& lhs, const prioritized& rhs) {
-        return lhs.priority < rhs.priority;
-      }
+\subsection{Formulation with Angle of Incidence}
 
-      bool operator()(const std::weak_ptr<prioritized> lhs,
-                      const std::weak_ptr<prioritized> rhs) {
+\section{Waves in Matter and Constitutive Relations}
 
-        if (auto l = lhs.lock()) {
-          if (auto r = rhs.lock()) {
-            // if both valid, check their priority
-            // in case they are the same, left is prioritized
-            return l->priority < r->priority;
-          } else {
-            // if right is expired, left is prioritized
-            return true;
-          }
-        } else {
-          // if left is expired, the right is prioritized
-          return false;
-        }
-      }
-    };
+\subsection{Linear Materials}
 
-    template<typename Prioritized>
-    using queue = std::multiset<Prioritized, prioritize>;
-  }
-} 
-    \end{lstlisting}
-    \caption{
-      An abomination written in modern C\texttt{++}.
-      \label{fig:cpp-code}
-    }
-  \end{figure*}
+We consider \emph{linear piecewise isotropic} materials, that is $\vec{D}$ is
+linear in $\vec{E}$ and $\vec{B}$ in $\vec{H}$. The most general linear
+relationship is given when the material is both \emph{spatially dispersive}
+and \emph{temporally dispersive}
+\[
+  \vec{D}(\vec{r}, t) = \varepsilon_0 \iint_{\mathbb{R}^4} \tilde{\varepsilon}(\vec{r} -
+  \vec{r}', t - t') \vec{E}(\vec{r}', t') ~d\vec{r}' dt',
+\]
+that is, the local field depends on material in the neighborhood and its past.
+To avoid the covolution we use the Fourier transform to get
+$\hat{\vec{D}}(\vec{k}, \omega) = \varepsilon_0 \varepsilon(\vec{k}, \omega)
+\hat{\vec{E}}(\vec{k}, \omega)$. Spatial dispersion can be ignored, but
+temporal dispersion cannot, hence we work with the \emph{dielectric function}
+$\varepsilon(\vec{r}, \omega)$. In the same way for $\vec{H}$ and $\vec{B}$
+there is the magnetic permeability $\mu(\vec{r}, \omega)$. For time
+\emph{independent} fields we can write
+\[
+  \cvec{D}(\vec{r}) = \varepsilon_0\varepsilon(\vec{r}, \omega)
+    \cvec{E}(\vec{r}), \qquad
+  \cvec{B}(\vec{r}) = \mu_0\mu(\vec{r}, \omega) \cvec{H}(\vec{r}).
+\]
+The same relations are also written using the \emph{susceptibilities}
+$\chi_e = \varepsilon -1$, $\chi_m = \mu - 1$:
+\[
+  \cvec{P}(\vec{r}) = \epsilon_0\chi_e(\vec{r}, \omega)\cvec{E}(\vec{r}),
+  \qquad
+  \cvec{M}(\vec{r}) = \chi_m(\vec{r}, \omega) \cvec{H}(\vec{r}).
+\]
+The wave equations in linear media are
+\begin{align*}
+  \curl \mu(\vec{r}, \omega)^{-1} \curl \cvec{E}(\vec{r})
+    - k_0^2 \varepsilon(\vec{r}, \omega) \cvec{E}(\vec{r})
+    &= i\omega \mu_0 \cvec{J}_0(\vec{r}) \\
+  \curl \varepsilon(\vec{r}, \omega)^{-1} \curl \cvec{H}(\vec{r})
+    - k_0^2 \mu(\vec{r}, \omega) \cvec{H}(\vec{r})
+    &= \curl \varepsilon(\vec{r}, \omega)^{-1} \cvec{J}_0(\vec{r}),
+\end{align*}
+where $k_0 = \omega / c$ and the quantity $n = \sqrt{\varepsilon \mu}$ is the
+\emph{refraction index}. In absence of sources and isotropic $\mu(\omega)$ we
+obtain the Helmholz equation with $k^2 = k_0^2n^2$:
+$\vlaplacian\cvec{E}(\vec{r}) + k_0^2n^2\cvec{E}(\vec{r}) = \vec{0}$.
 
-  \subsection{Example of documents}
+\subsection{Conductivity and Conductors}
 
-  On HSR-Stud's GitHub organization you can find more documents written using
-  (possibly an older version of) this template. For example:
-  \begin{itemize}
-    \item \url{https://github.com/HSR-Stud/RegT4}
-    \item \url{https://github.com/HSR-Stud/FuVar}
-    \item \url{https://github.com/HSR-Stud/DigDes_2021}
-  \end{itemize}
-  Feel free to go there and improve them if you find missing sections or
-  errors.
+Conductivity $\sigma$ relates $\cvec{J}_\text{c}(\vec{r}) = \sigma(\vec{r}, \omega)
+\cvec{E}(\vec{r})$. Inserting the linear relation $\cvec{D} =
+\varepsilon_0\varepsilon \cvec{E}$ in Ampère's law and letting $\varepsilon =
+\varepsilon' + i\varepsilon''$
+be complex results in
+\[
+  \sigma(\vec{r}, \omega) = \omega \varepsilon_0\varepsilon''(\vec{r},
+  \omega).
+\]
 
-\end{english}
+Inside of ideal conductors there are no free charges. For non ideal conductors
+the charge inside dissipates within a time $T_\rho = \varepsilon_0\varepsilon
+/ \sigma$.
 
-% End of sample content
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Skin Effect}
+
+For a good conduct
+
+\subsection{Boundary Conditions}
+\subsection{Polarization}
+
+\section{Conservation Laws}
+
+\appendix
+
+\section{Fourier Transform}
+
+\section{Vector Analysis}
 
 \end{document}
